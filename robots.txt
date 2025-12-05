@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ai-tools-directory-5sn.pages.dev/sitemap.xml
