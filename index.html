@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Tools Directory (100+ Tools)</title>
+  <style>
+    body {
+      margin:0;
+      font-family:sans-serif;
+      background:#0f0f10;
+      color:#fff;
+    }
+    header { text-align:center; padding:2rem; }
+    h1 { margin-bottom:0.3rem; }
+    #summary { font-size:0.9rem; color:#aaa; margin-bottom:0.5rem; }
+    #search { padding:0.5rem; width:300px; border-radius:5px; border:none; margin-top:5px; }
+    .filters { margin-top:10px; }
+    .filters button {
+      margin:0 5px; padding:5px 10px;
+      border:none; border-radius:5px;
+      background:#4f46e5; color:white;
+      cursor:pointer; transition:background 0.3s;
+    }
+    .filters button.active { background:#4338ca; }
+
+    .container {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:2rem;
+      padding:2rem;
+    }
+    .card {
+      background:#1a1a2f;
+      border-radius:15px;
+      padding:1rem;
+      text-align:center;
+      box-shadow:0 0 20px rgba(0,0,0,0.5);
+      transform: translateY(20px);
+      opacity:0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
+      position: relative;
+    }
+    .card.visible { transform: translateY(0); opacity:1; }
+    .card:hover { transform: translateY(-10px) scale(1.03); box-shadow:0 0 40px rgba(0,0,0,0.6); }
+
+    .card img { width:48px; height:48px; border-radius:8px; margin-bottom:0.5rem; }
+    .card h2 { font-size:1rem; margin-bottom:0.3rem; }
+    .card p { font-size:0.85rem; color:#aaa; min-height:40px; }
+    .card a { display:inline-block; margin-top:5px; padding:5px 10px; background:#4f46e5; color:white; text-decoration:none; border-radius:5px; font-size:0.85rem; transition: background 0.3s; }
+    .card a:hover { background:#4338ca; }
+
+    /* Tag style */
+    .tag {
+      position:absolute;
+      top:10px;
+      right:10px;
+      background:#ff5722;
+      color:white;
+      padding:3px 8px;
+      border-radius:5px;
+      font-size:0.75rem;
+      font-weight:bold;
+    }
+    .tag.free { background:#4caf50; }
+    .tag.paid { background:#ff5722; }
+    .tag.limited { background:#ffc107; color:#111; }
+
+    @media(max-width:600px){
+      #search { width:90%; }
+      .filters { flex-wrap:wrap; justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>AI Tools Directory</h1>
+  <div id="summary">Loading tools...</div>
+  <input type="text" id="search" placeholder="Search AI tools...">
+  <div class="filters">
+    <button class="active" data-category="All">All</button>
+    <button data-category="Writing">Writing</button>
+    <button data-category="Image">Image</button>
+    <button data-category="Video">Video</button>
+    <button data-category="Audio">Audio</button>
+    <button data-category="Coding">Coding</button>
+    <button data-category="Research">Research</button>
+    <button data-category="Productivity">Productivity</button>
+    <button data-category="Misc">Misc</button>
+    <button data-category="Job">Job</button>
+    <button data-category="Resume">Resume</button>
+
+  </div>
+</header>
+
+<div class="container" id="container"></div>
+
+<script>
+const tools = [
+  // Writing / Content
+  {title:"ChatGPT",desc:"Conversational AI by OpenAI",link:"https://chat.openai.com",cat:"Writing",domain:"openai.com", tag:"Free"},
+  {title:"Claude",desc:"Advanced AI chatbot",link:"https://www.anthropic.com",cat:"Writing",domain:"www.anthropic.com", tag:"Paid"},
+  {title:"Jasper",desc:"AI content generation",link:"https://www.jasper.ai",cat:"Writing",domain:"www.jasper.ai", tag:"Paid"},
+  {title:"Writesonic",desc:"AI blog/ads assistant",link:"https://writesonic.com",cat:"Writing",domain:"writesonic.com", tag:"Paid"},
+  {title:"Copy.ai",desc:"Marketing copy AI",link:"https://www.copy.ai",cat:"Writing",domain:"www.copy.ai", tag:"Paid"},
+  {title:"Notion AI",desc:"AI notes & writing",link:"https://www.notion.so",cat:"Writing",domain:"www.notion.so", tag:"Paid"},
+  {title:"QuillBot",desc:"Paraphrasing AI",link:"https://quillbot.com",cat:"Writing",domain:"quillbot.com", tag:"Free"},
+  {title:"Wordtune",desc:"AI rewriting tool",link:"https://www.wordtune.com",cat:"Writing",domain:"www.wordtune.com", tag:"Paid"},
+  {title:"DeepL",desc:"AI translation",link:"https://www.deepl.com",cat:"Writing",domain:"www.deepl.com", tag:"Free"},
+  {title:"Sudowrite",desc:"Creative AI writing assistant",link:"https://www.sudowrite.com",cat:"Writing",domain:"www.sudowrite.com", tag:"Paid"},
+  {title:"Rytr",desc:"AI writing assistant",link:"https://rytr.me",cat:"Writing",domain:"rytr.me", tag:"Free"},
+  {title:"Anyword",desc:"AI copywriting & ad generator",link:"https://anyword.com",cat:"Writing",domain:"anyword.com", tag:"Paid"},
+  {title:"Writesaver.ai",desc:"AI proofreading & rewriting",link:"https://writesaver.ai",cat:"Writing",domain:"writesaver.ai", tag:"Free"},
+
+  // Image / Design / Art
+  {title:"Midjourney",desc:"AI image generation",link:"https://www.midjourney.com",cat:"Image",domain:"www.midjourney.com", tag:"Paid"},
+  {title:"DALL·E",desc:"OpenAI text-to-image AI",link:"https://openai.com/dall-e",cat:"Image",domain:"openai.com", tag:"Paid"},
+  {title:"Stable Diffusion",desc:"Open-source AI image model",link:"https://stability.ai",cat:"Image",domain:"stability.ai", tag:"Free"},
+  {title:"Canva",desc:"Design platform with AI",link:"https://www.canva.com",cat:"Image",domain:"www.canva.com", tag:"Free"},
+  {title:"Artbreeder",desc:"Collaborative AI images",link:"https://www.artbreeder.com",cat:"Image",domain:"www.artbreeder.com", tag:"Free"},
+  {title:"Remove.bg",desc:"AI background removal",link:"https://www.remove.bg",cat:"Image",domain:"www.remove.bg", tag:"Paid"},
+  {title:"Adobe Firefly",desc:"AI design & image generation",link:"https://firefly.adobe.com",cat:"Image",domain:"firefly.adobe.com", tag:"Paid"},
+  {title:"Leonardo AI",desc:"AI art creation",link:"https://www.leonardo.ai",cat:"Image",domain:"www.leonardo.ai", tag:"Paid"},
+  {title:"Wombo.art",desc:"AI art generator",link:"https://www.wombo.art",cat:"Image",domain:"www.wombo.art", tag:"Free"},
+  {title:"Deep Dream Generator",desc:"Surreal AI art generation",link:"https://deepdreamgenerator.com",cat:"Image",domain:"deepdreamgenerator.com", tag:"Free"},
+  {title:"NightCafe Studio",desc:"AI art & image tools",link:"https://creator.nightcafe.studio",cat:"Image",domain:"creator.nightcafe.studio", tag:"Paid"},
+  {title:"PicsArt AI",desc:"Image editing with AI",link:"https://picsart.com",cat:"Image",domain:"picsart.com", tag:"Free"},
+  {title:"Fotor AI",desc:"Photo editing and design AI",link:"https://www.fotor.com",cat:"Image",domain:"www.fotor.com", tag:"Free"},
+
+  // Video / Animation / Media
+  {title:"Sora AI", desc:"AI video generation platform", link:"https://www.sora.com", cat:"Video", domain:"sora.com", tag:"Paid"},
+  {title:"Runway ML",desc:"AI video editing",link:"https://runwayml.com",cat:"Video",domain:"runwayml.com", tag:"Paid"},
+  {title:"Pika Labs",desc:"Text-to-video AI",link:"https://pika.art",cat:"Video",domain:"pika.art", tag:"Paid"},
+  {title:"Synthesia",desc:"AI avatar video",link:"https://www.synthesia.io",cat:"Video",domain:"www.synthesia.io", tag:"Paid"},
+  {title:"Descript",desc:"AI audio/video editing & transcription",link:"https://www.descript.com",cat:"Video",domain:"www.descript.com", tag:"Paid"},
+  {title:"ElevenLabs",desc:"Realistic AI voice",link:"https://elevenlabs.io",cat:"Audio",domain:"elevenlabs.io", tag:"Paid"},
+  {title:"Lumen5",desc:"Text-to-video AI",link:"https://lumen5.com",cat:"Video",domain:"lumen5.com", tag:"Paid"},
+  {title:"Pictory",desc:"Script-to-video AI",link:"https://pictory.ai",cat:"Video",domain:"pictory.ai", tag:"Paid"},
+  {title:"InVideo",desc:"AI video creation",link:"https://invideo.io",cat:"Video",domain:"invideo.io", tag:"Paid"},
+  {title:"Magisto",desc:"AI video editor",link:"https://www.magisto.com",cat:"Video",domain:"www.magisto.com", tag:"Paid"},
+  {title:"Veed.io",desc:"AI online video editor",link:"https://www.veed.io",cat:"Video",domain:"www.veed.io", tag:"Paid"},
+  {title:"RunDiffusion",desc:"AI video & diffusion experiments",link:"https://rundiffusion.com",cat:"Video",domain:"rundiffusion.com", tag:"Free"},
+  {title:"Dreamina AI", desc:"AI video & image generation platform", link:"https://dreamina.ai", cat:"Video", domain:"dreamina.ai", tag:"Paid"},
+
+
+  // Audio / Speech / Voice
+  {title:"Murph",desc:"AI voiceover & audio generation",link:"https://www.murph.ai",cat:"Audio",domain:"www.murph.ai", tag:"Paid"},
+  {title:"Voicemaker.in",desc:"Text-to-speech AI",link:"https://voicemaker.in",cat:"Audio",domain:"voicemaker.in", tag:"Free"},
+  {title:"Resemble AI",desc:"Voice cloning & generation",link:"https://www.resemble.ai",cat:"Audio",domain:"www.resemble.ai", tag:"Paid"},
+  {title:"PlayHT",desc:"AI text-to-speech platform",link:"https://play.ht",cat:"Audio",domain:"play.ht", tag:"Paid"},
+  {title:"Cleanvoice AI",desc:"AI audio cleanup & editing",link:"https://cleanvoice.ai",cat:"Audio",domain:"cleanvoice.ai", tag:"Paid"},
+
+  // Coding / Development Tools
+  {title:"Tabnine",desc:"AI code autocompletion",link:"https://www.tabnine.com",cat:"Coding",domain:"www.tabnine.com", tag:"Paid"},
+  {title:"GitHub Copilot",desc:"AI coding assistant",link:"https://github.com/features/copilot",cat:"Coding",domain:"github.com", tag:"Paid"},
+  {title:"Cursor",desc:"AI code editor assistant",link:"https://www.cursor.so",cat:"Coding",domain:"www.cursor.so", tag:"Paid"},
+  {title:"Replit Ghostwriter",desc:"AI coding companion",link:"https://replit.com/site/ghostwriter",cat:"Coding",domain:"replit.com", tag:"Paid"},
+  {title:"CodeWP",desc:"AI WordPress coding assistant",link:"https://codewp.ai",cat:"Coding",domain:"codewp.ai", tag:"Paid"},
+  {title:"Blackbox AI",desc:"Developer AI toolkit",link:"https://www.blackbox.ai",cat:"Coding",domain:"www.blackbox.ai", tag:"Free"},
+  {title:"Kite",desc:"AI programming assistant",link:"https://www.kite.com",cat:"Coding",domain:"www.kite.com", tag:"Free"},
+  {title:"MutableAI",desc:"AI code refactoring tool",link:"https://mutable.ai",cat:"Coding",domain:"mutable.ai", tag:"Paid"},
+  {title:"Codex",desc:"OpenAI code generation API",link:"https://openai.com/blog/openai-codex",cat:"Coding",domain:"openai.com", tag:"Paid"},
+  {title:"Sourcery",desc:"AI code improvement tool",link:"https://sourcery.ai",cat:"Coding",domain:"sourcery.ai", tag:"Free"},
+  {title:"CodeT5 Playground",desc:"AI code generation playground",link:"https://huggingface.co/spaces/Salesforce/CodeT5",cat:"Coding",domain:"huggingface.co", tag:"Free"},
+  {title:"Codeium",desc:"Free AI coding assistant",link:"https://codeium.com",cat:"Coding",domain:"codeium.com", tag:"Free"},
+
+  // Research / Productivity / Misc
+  {title:"Perplexity AI",desc:"AI-powered search & research assistant",link:"https://www.perplexity.ai",cat:"Research",domain:"www.perplexity.ai", tag:"Free"},
+  {title:"Consensus",desc:"AI research summary engine",link:"https://consensus.app",cat:"Research",domain:"consensus.app", tag:"Paid"},
+  {title:"Scholarcy",desc:"AI summarizer for research papers",link:"https://www.scholarcy.com",cat:"Research",domain:"www.scholarcy.com", tag:"Paid"},
+  {title:"Otter.ai",desc:"AI meeting transcription",link:"https://otter.ai",cat:"Productivity",domain:"otter.ai", tag:"Paid"},
+  {title:"Fireflies.ai",desc:"AI meeting assistant",link:"https://www.fireflies.ai",cat:"Productivity",domain:"www.fireflies.ai", tag:"Paid"},
+  {title:"Trello + AI",desc:"AI-enhanced project management",link:"https://trello.com",cat:"Productivity",domain:"trello.com", tag:"Free"},
+  {title:"Todoist + AI",desc:"AI-powered task app",link:"https://todoist.com",cat:"Productivity",domain:"todoist.com", tag:"Free"},
+  {title:"Zapier AI",desc:"Automation with AI triggers",link:"https://zapier.com/app/editor",cat:"Productivity",domain:"zapier.com", tag:"Free"},
+  {title:"Grammarly",desc:"AI writing & grammar assistant",link:"https://www.grammarly.com",cat:"Writing",domain:"www.grammarly.com", tag:"Paid"},
+  {title:"ProWritingAid",desc:"Advanced writing assistant",link:"https://prowritingaid.com",cat:"Writing",domain:"prowritingaid.com", tag:"Paid"},
+  {title:"MarketMuse",desc:"AI content research & optimization",link:"https://www.marketmuse.com",cat:"Research",domain:"www.marketmuse.com", tag:"Paid"},
+  {title:"You.com",desc:"AI-powered search engine",link:"https://you.com",cat:"Misc",domain:"you.com", tag:"Free"},
+  {title:"AI Dungeon",desc:"Interactive AI storytelling",link:"https://play.aidungeon.io",cat:"Misc",domain:"play.aidungeon.io", tag:"Paid"},
+  {title:"CopyMonkey",desc:"AI Amazon listing generator",link:"https://copymonkey.ai",cat:"Misc",domain:"copymonkey.ai", tag:"Paid"},
+  {title:"LegalRobot",desc:"AI legal document analysis",link:"https://www.legalrobot.com",cat:"Misc",domain:"www.legalrobot.com", tag:"Paid"},
+  {title:"Writely.ai",desc:"AI writing & editing platform",link:"https://www.writely.ai",cat:"Writing",domain:"www.writely.ai", tag:"Free"},
+  {title:"NightOwl AI",desc:"AI-based data analysis tool",link:"https://nightowl.ai",cat:"Misc",domain:"nightowl.ai", tag:"Paid"},
+  {title:"RunwayText",desc:"AI text tools suite",link:"https://runwayml.com/text",cat:"Misc",domain:"runwayml.com", tag:"Free"},
+  {title:"Humata AI",desc:"AI PDF & document assistant",link:"https://humata.ai",cat:"Research",domain:"humata.ai", tag:"Paid"},
+  {title:"Socratic by Google",desc:"AI homework helper",link:"https://socratic.org",cat:"Research",domain:"socratic.org", tag:"Free"},
+  {title:"Explainpaper",desc:"AI summarizer for academic papers",link:"https://www.explainpaper.com",cat:"Research",domain:"www.explainpaper.com", tag:"Free"},
+  
+  // Job / Careers
+  {title:"We Work Remotely", desc:"Remote job listings platform", link:"https://weworkremotely.com", cat:"Job", domain:"weworkremotely.com", tag:"Free"},
+  {title:"Remote OK", desc:"Remote jobs board", link:"https://remoteok.com", cat:"Job", domain:"remoteok.com", tag:"Free"},
+  {title:"AngelList Jobs", desc:"Startup jobs and remote roles", link:"https://angel.co/jobs", cat:"Job", domain:"angel.co", tag:"Free"},
+  {title:"FlexJobs", desc:"Remote and flexible jobs platform", link:"https://www.flexjobs.com", cat:"Job", domain:"www.flexjobs.com", tag:"Paid"},
+  {title:"Jobbatical", desc:"Global remote job opportunities", link:"https://jobbatical.com", cat:"Job", domain:"jobbatical.com", tag:"Paid"},
+  {title:"Hubstaff Talent", desc:"Free remote job board", link:"https://talent.hubstaff.com", cat:"Job", domain:"talent.hubstaff.com", tag:"Free"},
+  {title:"Working Nomads", desc:"Curated remote jobs", link:"https://www.workingnomads.co/jobs", cat:"Job", domain:"www.workingnomads.co", tag:"Free"},
+  {title:"Remotive", desc:"Remote job listings and community", link:"https://remotive.io", cat:"Job", domain:"remotive.io", tag:"Free"},
+  {title:"PowerToFly", desc:"Remote jobs for women", link:"https://powertofly.com", cat:"Job", domain:"powertofly.com", tag:"Free"},
+  {title:"Virtual Vocations", desc:"Telecommuting jobs", link:"https://www.virtualvocations.com", cat:"Job", domain:"www.virtualvocations.com", tag:"Paid"},
+  {title:"Indeed", desc:"Global job search platform", link:"https://www.indeed.com", cat:"Job", domain:"www.indeed.com", tag:"Free"},
+
+  // Resume / CV Tools
+  {title:"Resume.com", desc:"Online resume builder", link:"https://www.resume.com", cat:"Resume", domain:"resume.com", tag:"Free"},
+  {title:"Zety", desc:"AI resume & cover letter builder", link:"https://zety.com", cat:"Resume", domain:"zety.com", tag:"Paid"},
+  {title:"Kickresume", desc:"AI resume creator", link:"https://kickresume.com", cat:"Resume", domain:"kickresume.com", tag:"Free"},
+  {title:"VisualCV", desc:"Create visually appealing resumes", link:"https://www.visualcv.com", cat:"Resume", domain:"www.visualcv.com", tag:"Free"},
+  {title:"Novoresume", desc:"Modern resume builder with AI tips", link:"https://novoresume.com", cat:"Resume", domain:"novoresume.com", tag:"Paid"},
+  {title:"Enhancv", desc:"Professional resume and CV creator", link:"https://enhancv.com", cat:"Resume", domain:"enhancv.com", tag:"Paid"},
+  {title:"Resumonk", desc:"Simple resume builder", link:"https://www.resumonk.com", cat:"Resume", domain:"www.resumonk.com", tag:"Free"},
+  {title:"Standard Resume", desc:"Clean resume builder", link:"https://standardresume.co", cat:"Resume", domain:"standardresume.co", tag:"Free"},
+  {title:"MyPerfectResume", desc:"AI-assisted resume builder", link:"https://www.myperfectresume.com", cat:"Resume", domain:"www.myperfectresume.com", tag:"Paid"},
+  {title:"CakeResume", desc:"Drag-and-drop resume builder", link:"https://www.cakeresume.com", cat:"Resume", domain:"www.cakeresume.com", tag:"Free"},
+
+
+
+
+];
+
+const container = document.getElementById('container');
+const summary = document.getElementById('summary');
+const categories = [...new Set(tools.map(t=>t.cat))];
+
+function render(filter = '', cat = 'All') {
+  container.innerHTML = '';
+  const filtered = tools.filter(t => {
+    const searchText = filter.toLowerCase();
+    const matchesFilter =
+      t.title.toLowerCase().includes(searchText) ||
+      t.desc.toLowerCase().includes(searchText) ||
+      t.cat.toLowerCase().includes(searchText) ||
+      t.tag.toLowerCase().includes(searchText) ||
+      t.domain.toLowerCase().includes(searchText);
+    const matchesCategory = cat === 'All' || t.cat === cat;
+    return matchesFilter && matchesCategory;
+  });
+
+  filtered.forEach((t, i) => {
+    const logo = `https://www.google.com/s2/favicons?sz=64&domain_url=${t.domain}`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    const tagLower = t.tag.toLowerCase();
+    const tagClass = (tagLower === 'free' ? 'free' : (tagLower === 'paid' ? 'paid' : (tagLower === 'limited' ? 'limited' : '')));
+    card.innerHTML = `
+      <div class="tag ${tagClass}">${t.tag}</div>
+      <img src="${logo}" alt="${t.title} logo" onerror="this.src='https://via.placeholder.com/64?text=AI'">
+      <h2>${t.title}</h2>
+      <p>${t.desc}</p>
+      <a href="${t.link}" target="_blank">Visit</a>
+    `;
+    container.appendChild(card);
+    setTimeout(() => card.classList.add('visible'), i * 30);
+  });
+
+  summary.textContent = `Showing ${filtered.length} tools | Categories: ${categories.join(', ')}`;
+}
+
+// Initial render
+render();
+
+document.getElementById('search').addEventListener('input', e => {
+  const cat = document.querySelector('.filters button.active').dataset.category;
+  render(e.target.value, cat);
+});
+document.querySelectorAll('.filters button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.category;
+    const search = document.getElementById('search').value;
+    render(search, cat);
+  });
+});
+</script>
+
+</body>
+</html>
